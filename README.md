@@ -1,203 +1,243 @@
-# 🧠 StudyMind AI — Personal Study Assistant
+# AI Study Assistant
 
-A full-stack AI study assistant built with **React.js** (frontend) + **Node.js/Express** (backend) + **Anthropic Claude API**.
+A modern, ChatGPT-inspired AI study assistant built with React and Node.js. This application helps students with explanations, MCQs, code walkthroughs, and note summaries using Groq's AI models.
 
----
+## ✨ Features
 
-## 📁 Project Structure
+- 🤖 AI-powered study assistance
+- 📝 Multiple choice question generation
+- 💻 Code explanation and walkthroughs
+- 📄 Note summarization
+- 🌙 Dark/Light mode toggle
+- 📱 Responsive design
+- 🎨 Modern ChatGPT-inspired UI
+- ⚡ Real-time chat interface
 
+## 🏗️ Project Structure
+
+### Backend (`/backend`)
 ```
-ai-study-assistant/
-│
-├── backend/                   ← Node.js server
-│   ├── server.js              ← Main Express server (API logic)
-│   ├── package.json           ← Backend dependencies
-│   ├── .env.example           ← Template for your API key (copy to .env)
-│   └── .env                   ← YOUR API key (never commit this!)
-│
-└── frontend/                  ← React app
-    ├── public/
-    │   └── index.html         ← HTML shell
-    ├── src/
-    │   ├── index.js           ← React entry point
-    │   ├── index.css          ← Global styles + CSS variables
-    │   ├── App.js             ← Root React component
-    │   ├── api.js             ← API communication helper
-    │   └── components/
-    │       ├── StudyAssistant.js   ← Main chat UI component
-    │       └── StudyAssistant.css  ← Chat UI styles
-    └── package.json           ← Frontend dependencies
+backend/
+├── config/
+│   └── index.js              # Configuration and environment variables
+├── controllers/
+│   └── chatController.js     # Chat request handlers
+├── middleware/
+│   └── cors.js              # CORS middleware
+├── routes/
+│   └── chat.js              # Chat API routes
+├── services/
+│   └── aiService.js         # AI service for Groq API integration
+├── utils/
+│   └── validation.js        # Input validation utilities
+├── server.js                # Main application entry point
+├── package.json
+└── .env                     # Environment variables (API keys)
 ```
 
----
+### Frontend (`/frontend`)
+```
+frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── components/
+│   │   ├── chat/
+│   │   │   ├── ChatMessage.js
+│   │   │   ├── MessageInput.js
+│   │   │   ├── MessagesArea.js
+│   │   │   ├── TypingIndicator.js
+│   │   │   └── WelcomeScreen.js
+│   │   ├── ui/
+│   │   │   ├── Header.js
+│   │   │   ├── Sidebar.js
+│   │   │   └── ThemeToggle.js
+│   │   └── ChatInterface.js
+│   ├── context/
+│   │   └── ThemeContext.js
+│   ├── hooks/
+│   │   └── useChat.js
+│   ├── services/
+│   │   └── chatService.js
+│   ├── styles/
+│   │   ├── global.css
+│   │   ├── ui.css
+│   │   └── chat.css
+│   ├── App.js
+│   └── index.js
+├── package.json
+└── README.md
+```
 
-## 🚀 Setup Instructions (Step by Step)
+## 🚀 Getting Started
 
 ### Prerequisites
-Make sure you have these installed:
-- **Node.js** (v16 or higher) — https://nodejs.org
-- **npm** (comes with Node.js)
-- An **Anthropic API key** — https://console.anthropic.com
 
----
+- Node.js (v16 or higher)
+- npm or yarn
+- Groq API key
 
-### Step 1: Get Your Anthropic API Key
+### Installation
 
-1. Go to https://console.anthropic.com
-2. Sign up or log in
-3. Navigate to **API Keys** → **Create Key**
-4. Copy the key (starts with `sk-ant-...`)
-5. Keep it safe — you'll use it in Step 3
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd ai-study-assistant
+   ```
 
----
+2. **Backend Setup**
+   ```bash
+   cd backend
+   npm install
+   ```
 
-### Step 2: Install Backend Dependencies
+3. **Frontend Setup**
+   ```bash
+   cd ../frontend
+   npm install
+   ```
 
-Open a terminal in the project folder:
+4. **Environment Configuration**
 
-```bash
-# Navigate to backend folder
-cd ai-study-assistant/backend
+   Create a `.env` file in the backend directory:
+   ```env
+   PORT=5000
+   GROQ_API_KEY=your_groq_api_key_here
+   ```
 
-# Install all required packages
-npm install
+   > **Important:** Get your API key from [Groq Console](https://console.groq.com/)
+
+### Running the Application
+
+1. **Start the Backend**
+   ```bash
+   cd backend
+   npm start
+   # or for development with auto-reload:
+   npm run dev
+   ```
+
+2. **Start the Frontend** (in a new terminal)
+   ```bash
+   cd frontend
+   npm start
+   ```
+
+3. **Open your browser**
+
+   Navigate to `http://localhost:3000`
+
+## 🎯 Usage
+
+### Quick Start Prompts
+
+The app provides several quick-start prompts:
+- **Study Question**: Get clear explanations
+- **Generate MCQs**: Create multiple choice questions
+- **Explain Code**: Understand code snippets
+- **Summarize Notes**: Get concise summaries
+
+### Chat Features
+
+- **Real-time responses** from AI
+- **Markdown support** for formatted responses
+- **Message history** maintained during session
+- **Typing indicators** for better UX
+- **Error handling** with user-friendly messages
+
+### Theme Toggle
+
+Click the sun/moon icon in the header to switch between light and dark modes. Your preference is saved automatically.
+
+## 🛠️ Development
+
+### Backend Architecture
+
+- **MVC Pattern**: Controllers handle requests, services manage business logic
+- **Modular Design**: Separate concerns with dedicated folders
+- **Input Validation**: Sanitization and validation utilities
+- **Error Handling**: Comprehensive error management
+- **CORS Support**: Configured for frontend communication
+
+### Frontend Architecture
+
+- **Component-Based**: Reusable, focused components
+- **Custom Hooks**: State management logic extraction
+- **Context API**: Theme state management
+- **CSS Variables**: Dynamic theming support
+- **Responsive Design**: Mobile-first approach
+
+### Key Technologies
+
+- **Backend**: Node.js, Express.js, Groq AI
+- **Frontend**: React, React Markdown, CSS Variables
+- **Styling**: Custom CSS with modern design principles
+
+## 📝 API Reference
+
+### POST `/ask`
+
+Send a chat message to the AI assistant.
+
+**Request Body:**
+```json
+{
+  "message": "Your question here",
+  "history": [
+    {
+      "role": "user",
+      "content": "Previous message"
+    },
+    {
+      "role": "assistant",
+      "content": "Previous response"
+    }
+  ]
+}
 ```
 
-This installs:
-- `express` — Web server framework
-- `cors` — Allows React to call our server
-- `dotenv` — Loads secrets from .env file
-- `@anthropic-ai/sdk` — Official Claude AI client
-- `nodemon` — Auto-restarts server when you save changes
-
----
-
-### Step 3: Configure Your API Key
-
-```bash
-# In the backend folder, copy the example env file
-cp .env.example .env
+**Response:**
+```json
+{
+  "success": true,
+  "response": "AI's answer here"
+}
 ```
 
-Now open `.env` in any text editor and replace the placeholder:
+## 🔧 Configuration
 
-```
-ANTHROPIC_API_KEY=sk-ant-YOUR_ACTUAL_KEY_HERE
-PORT=5000
-```
+### Environment Variables
 
-⚠️ **IMPORTANT**: Never commit the `.env` file to GitHub!
-   Add it to your `.gitignore` file.
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `5000` |
+| `GROQ_API_KEY` | Groq API key | Required |
+| `NODE_ENV` | Environment | `development` |
 
----
+### AI Model Configuration
 
-### Step 4: Install Frontend Dependencies
+- **Model**: `llama-3.3-70b-versatile`
+- **Max Tokens**: `2048`
+- **Temperature**: `0.7`
 
-Open a **new terminal** (keep the first one for the backend):
+## 🤝 Contributing
 
-```bash
-# Navigate to frontend folder
-cd ai-study-assistant/frontend
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-# Install React and all required packages
-npm install
-```
+## 📄 License
 
-This installs:
-- `react` + `react-dom` — Core React library
-- `react-scripts` — Build tools (Create React App)
-- `react-markdown` — Renders AI responses as formatted text
-- `remark-gfm` — GitHub-flavored markdown support
+This project is licensed under the MIT License.
 
----
+## 🙏 Acknowledgments
 
-### Step 5: Start the Backend Server
-
-In your **backend terminal**:
-
-```bash
-# Start with auto-reload (development)
-npm run dev
-
-# OR start normally (production)
-npm start
-```
-
-You should see:
-```
-🚀 ====================================
-   AI Study Assistant Backend
-   Running on http://localhost:5000
-======================================
-✅ Anthropic API key loaded successfully
-```
-
----
-
-### Step 6: Start the React Frontend
-
-In your **frontend terminal**:
-
-```bash
-npm start
-```
-
-React will automatically open http://localhost:3000 in your browser.
-
----
-
-### ✅ It's Running!
-
-- **Frontend**: http://localhost:3000
-- **Backend**: http://localhost:5000
-- **API Test**: http://localhost:5000/ (should show status message)
-
----
-
-## 🎯 Features
-
-| Feature | How to Use |
-|---------|------------|
-| **Study Questions** | Type any question about any subject |
-| **Generate MCQs** | "Generate 5 MCQs about photosynthesis" |
-| **Explain Code** | Paste code + "Explain this code" |
-| **Summarize Notes** | Paste notes + "Summarize these notes" |
-| **Chat History** | Conversation is remembered during the session |
-
----
-
-## 🔧 How It Works (For Learning)
-
-```
-User types question in React
-        ↓
-React sends POST request to /ask
-        ↓
-Express server receives request
-        ↓
-Server calls Anthropic Claude API
-        ↓
-Claude generates a response
-        ↓
-Server sends response back to React
-        ↓
-React displays formatted response
-```
-
----
-
-## 🐛 Troubleshooting
-
-**"Cannot connect to backend"**
-→ Make sure the backend is running on port 5000
-→ Check that `"proxy": "http://localhost:5000"` is in frontend/package.json
-
-**"Invalid API key"**
-→ Double-check your API key in backend/.env
-→ Make sure there are no extra spaces
-
-**"Module not found"**
-→ Run `npm install` again in the folder with the error
+- [Groq](https://groq.com/) for the AI API
+- [React](https://reactjs.org/) for the frontend framework
+- [Express.js](https://expressjs.com/) for the backend framework
+- Inspired by ChatGPT's design and user experience
 
 **Port 5000 in use**
 → Change PORT=5001 in your .env file

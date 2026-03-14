@@ -1,78 +1,55 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
+// ============================================================
+// server.js — Main Application Entry Point
+// ============================================================
+// Sets up and starts the Express server with all middleware and routes.
+// This is the central file that brings everything together.
+// ============================================================
+
+const express = require('express');
+const config = require('./config');
+const corsMiddleware = require('./middleware/cors');
+const chatRoutes = require('./routes/chat');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-app.use(cors({
-  origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
-  methods: ["GET", "POST"],
-  credentials: true,
-}));
+// ============================================================
+// MIDDLEWARE SETUP
+// ============================================================
+
+// CORS configuration
+app.use(corsMiddleware);
+
+// Parse JSON request bodies
 app.use(express.json());
 
-const SYSTEM_PROMPT = `You are an expert AI Study Assistant. Help students with:
-1. Study Questions — clear explanations
-2. MCQ Generation — proper format with answers
-3. Code Explanation — simple terms
-4. Note Summarization — key points
-Always be friendly, use emojis, format with markdown.`;
+// ============================================================
+// ROUTES SETUP
+// ============================================================
 
-app.get("/", (req, res) => {
-  res.json({ status: "Groq Backend is running!" });
+// Chat routes
+app.use('/', chatRoutes);
+
+// ============================================================
+// ERROR HANDLING MIDDLEWARE
+// ============================================================
+
+// 404 handler for undefined routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
 
-app.post("/ask", async (req, res) => {
-  try {
-    const { message, history = [] } = req.body;
-
-    if (!message || message.trim() === "") {
-      return res.status(400).json({ error: "Message cannot be empty!" });
-    }
-
-    const messages = [
-      { role: "system", content: SYSTEM_PROMPT },
-      ...history.map((msg) => ({
-        role: msg.role === "assistant" ? "assistant" : "user",
-        content: msg.content,
-      })),
-      { role: "user", content: message.trim() },
-    ];
-
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: messages,
-        max_tokens: 2048,
-        temperature: 0.7,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error("Groq Error:", data);
-      return res.status(response.status).json({ error: data.error?.message || "Groq API error" });
-    }
-
-    const aiResponse = data.choices[0].message.content;
-    console.log(`Response ready (${aiResponse.length} chars)`);
-
-    res.json({ success: true, response: aiResponse });
-
-  } catch (error) {
-    console.error("ERROR:", error.message);
-    res.status(500).json({ error: "Server error: " + error.message });
-  }
+// Global error handler
+app.use((error, req, res, next) => {
+  console.error('Unhandled error:', error);
+  res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log("Groq API Key loaded:", !!process.env.GROQ_API_KEY);
+// ============================================================
+// SERVER STARTUP
+// ============================================================
+
+app.listen(config.PORT, () => {
+  console.log(`🚀 AI Study Assistant Backend running on http://localhost:${config.PORT}`);
+  console.log(`📚 Groq API Key loaded: ${!!config.GROQ_API_KEY}`);
+  console.log(`🤖 AI Model: ${config.AI_MODEL}`);
 });

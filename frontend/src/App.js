@@ -1,17 +1,20 @@
 // ============================================================
-// App.js — Root Component
+// App.js — Root Application Component
 // ============================================================
-// This is the top-level component that renders everything.
-// In React, components are like LEGO bricks — we assemble
-// smaller pieces to build the full UI.
+// The root component that wraps the entire application.
+// Provides theme context and renders the main chat interface.
 // ============================================================
 
-import React from "react";
-import StudyAssistant from "./components/StudyAssistant";
+import React from 'react';
+import { ThemeProvider } from './context/ThemeContext';
+import ChatInterface from './components/ChatInterface';
 
-// App just renders our main StudyAssistant component
 function App() {
-  return <StudyAssistant />;
+  return (
+    <ThemeProvider>
+      <ChatInterface />
+    </ThemeProvider>
+  );
 }
 
 export default App;
