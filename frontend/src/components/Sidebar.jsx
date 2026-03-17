@@ -9,7 +9,9 @@ import { useTheme } from '../context/ThemeContext';
 export default function Sidebar({
   chats,
   activeChatId,
+  messageCount = 0,
   onNewChat,
+  onClearChat,
   onSelectChat,
 }) {
   const { isDarkMode, toggleTheme } = useTheme();
@@ -45,6 +47,19 @@ export default function Sidebar({
           <FaPlus className="h-4 w-4" />
           New chat
         </button>
+
+        <div className="mt-2 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+          <span>Messages: {messageCount}</span>
+          {onClearChat && (
+            <button
+              type="button"
+              onClick={onClearChat}
+              className="px-2 py-1 rounded bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700"
+            >
+              Clear
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto">

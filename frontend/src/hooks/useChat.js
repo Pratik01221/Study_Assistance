@@ -189,6 +189,23 @@ export function useChat() {
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
+  // Clear all chats and start fresh
+  const clearChatHistory = () => {
+    const id = String(Date.now());
+    setChats([
+      {
+        id,
+        title: 'New chat',
+        messages: [],
+        lastMessage: '',
+      },
+    ]);
+    setActiveChatId(id);
+    setError(null);
+    setInputValue('');
+    setTimeout(() => inputRef.current?.focus(), 100);
+  };
+
   // Switch between chat sessions
   const selectChat = (chatId) => {
     setActiveChatId(chatId);

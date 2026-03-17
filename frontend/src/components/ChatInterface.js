@@ -24,6 +24,7 @@ export default function ChatInterface() {
     messagesEndRef,
     sendChatMessage,
     startNewChat,
+    clearChatHistory,
     selectChat,
     handleKeyDown,
   } = useChat();
@@ -40,7 +41,9 @@ export default function ChatInterface() {
         <Sidebar
           chats={chats}
           activeChatId={activeChatId}
+          messageCount={messages.length}
           onNewChat={startNewChat}
+          onClearChat={clearChatHistory}
           onSelectChat={(chatId) => {
             selectChat(chatId);
             setSidebarOpen(false);
@@ -74,7 +77,9 @@ export default function ChatInterface() {
             <Sidebar
               chats={chats}
               activeChatId={activeChatId}
+              messageCount={messages.length}
               onNewChat={startNewChat}
+              onClearChat={clearChatHistory}
               onSelectChat={(chatId) => {
                 selectChat(chatId);
                 setSidebarOpen(false);
