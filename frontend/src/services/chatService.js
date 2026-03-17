@@ -8,26 +8,44 @@
 // Base URL for our backend
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
+// Token helper
+const getToken = () => localStorage.getItem('ai-study-assistant-token');
+
 /**
  * Sends a message to the AI and returns the response
  * @param {string} message - The user's message
  * @param {Array} history - Previous conversation history
+ * @param {string} chatId - Optional chat id
  * @returns {Promise<Object>} Response containing the AI's answer
  */
-export async function sendMessage(message, history = []) {
+export async function sendMessage(message, history = [], chatId = null) {
   try {
-    const response = await fetch(`${API_BASE_URL}/ask`, {
+    const token = getToken();
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/ai/ask`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify({
-        message: message,
-        history: history,
+        message,
+        history,
+        chatId,
       }),
     });
 
     const data = await response.json();
+
+    if (response.status === 401 || response.status === 403) {
+      localStorage.removeItem('ai-study-assistant-token');
+      localStorage.removeItem('ai-study-assistant-user');
+      throw new Error('Unauthorized. Please log in again.');
+    }
 
     if (!response.ok) {
       throw new Error(data.error || 'Something went wrong. Please try again.');
@@ -37,4 +55,43 @@ export async function sendMessage(message, history = []) {
   } catch (error) {
     throw error;
   }
+}
+
+export async function fetchChats(userId) {
+  const token = getToken();
+
+  const response = await fetch(`${API_BASE_URL}/api/chats/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Could not fetch chat history.');
+  }
+
+  return data.chats;
+}
+
+export async function saveChatMessage(chatId, role, content) {
+  const token = getToken();
+
+  const response = await fetch(`${API_BASE_URL}/api/chat`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ chatId, role, content }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'Could not save chat message.');
+  }
+
+  return data.chat;
 }

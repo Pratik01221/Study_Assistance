@@ -6,11 +6,32 @@
 // ============================================================
 
 const express = require('express');
+const mongoose = require('mongoose');
 const config = require('./config');
 const corsMiddleware = require('./middleware/cors');
+const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
+const chatsRoutes = require('./routes/chats');
+const historyRoutes = require('./routes/history');
 
 const app = express();
+
+// ============================================================
+// DATABASE SETUP
+// ============================================================
+
+mongoose
+  .connect(config.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('✅ Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('❌ MongoDB connection error:', err);
+    process.exit(1);
+  });
 
 // ============================================================
 // MIDDLEWARE SETUP
@@ -26,7 +47,19 @@ app.use(express.json());
 // ROUTES SETUP
 // ============================================================
 
-// Chat routes
+// Auth routes
+app.use('/api/auth', authRoutes);
+
+// Chat / AI routes (protected)
+app.use('/api/ai', chatRoutes);
+
+// Chat persistence routes (protected)
+app.use('/api', chatsRoutes);
+
+// History routes (protected)
+app.use('/api/history', historyRoutes);
+
+// Legacy chat route for backwards compatibility
 app.use('/', chatRoutes);
 
 // ============================================================

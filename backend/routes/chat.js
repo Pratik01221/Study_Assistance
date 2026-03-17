@@ -7,11 +7,12 @@
 
 const express = require('express');
 const chatController = require('../controllers/chatController');
+const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 
-// POST /ask - Main chat endpoint
-router.post('/ask', chatController.askQuestion);
+// POST /ask - Main chat endpoint (protected)
+router.post('/ask', authenticate, chatController.askQuestion);
 
 // GET / - Health check
 router.get('/', chatController.healthCheck);

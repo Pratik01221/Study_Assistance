@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useChat } from '../hooks/useChat';
+import { useAuth } from '../context/AuthContext';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import ChatWindow from './ChatWindow';
@@ -30,6 +31,8 @@ function ChatInterface() {
     handleKeyDown,
   } = useChat();
 
+  const { user, logout } = useAuth();
+
   // UI state
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -47,7 +50,7 @@ function ChatInterface() {
         />
 
         <div className="flex flex-1 flex-col">
-          <Header onMenuClick={() => setSidebarOpen(true)} />
+          <Header onMenuClick={() => setSidebarOpen(true)} user={user} onLogout={logout} />
           <ChatWindow
             messages={messages}
             isLoading={isLoading}

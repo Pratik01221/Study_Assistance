@@ -55,9 +55,7 @@ function MessageInput({
           </button>
         </div>
 
-        <p className="input-hint">
-          Press <kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for new line
-        </p>
+        
       </div>
     </div>
   );

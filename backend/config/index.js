@@ -20,6 +20,13 @@ module.exports = {
   // API Keys (loaded from environment)
   GROQ_API_KEY: process.env.GROQ_API_KEY,
 
+  // MongoDB
+  MONGODB_URI: process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-study-assistant',
+
+  // JWT configuration
+  JWT_SECRET: process.env.JWT_SECRET || 'change-me-in-production',
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '7d',
+
   // AI Model configuration
   AI_MODEL: 'llama-3.3-70b-versatile',
   MAX_TOKENS: 2048,

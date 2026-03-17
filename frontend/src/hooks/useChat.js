@@ -6,7 +6,8 @@
 // ============================================================
 
 import { useState, useRef, useEffect } from 'react';
-import { sendMessage } from '../services/chatService';
+import { sendMessage, fetchChats } from '../services/chatService';
+import { useAuth } from '../context/AuthContext';
 
 export function useChat() {
     // Chat sessions (history)
@@ -38,6 +39,33 @@ export function useChat() {
 
   const activeChat = chats.find((chat) => chat.id === activeChatId) || chats[0];
   const messages = activeChat?.messages ?? [];
+
+  const { user, logout } = useAuth();
+
+  // Fetch chats for authenticated user
+  useEffect(() => {
+    async function loadChats() {
+      if (!user?.id) return;
+      try {
+        const persistedChats = await fetchChats(user.id);
+        if (persistedChats && persistedChats.length > 0) {
+          setChats(
+            persistedChats.map((item) => ({
+              id: item._id,
+              title: item.title || 'New chat',
+              messages: item.messages || [],
+              lastMessage: item.messages?.length ? item.messages[item.messages.length - 1].content : '',
+            }))
+          );
+          setActiveChatId(persistedChats[0]._id);
+        }
+      } catch (err) {
+        console.error('Failed to load chats:', err);
+      }
+    }
+
+    loadChats();
+  }, [user]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -98,7 +126,7 @@ export function useChat() {
       }));
 
       // Call API
-      const data = await sendMessage(text, history);
+      const data = await sendMessage(text, history, activeChatId);
 
       // Add AI response
       const aiMessage = {
@@ -116,7 +144,13 @@ export function useChat() {
         )
       );
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      const message = err.message || 'Something went wrong. Please try again.';
+      setError(message);
+
+      if (message.toLowerCase().includes('unauthorized')) {
+        // Force logout if token is invalid / expired
+        logout();
+      }
     } finally {
       setIsLoading(false);
       // Re-focus input

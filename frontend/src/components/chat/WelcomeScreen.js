@@ -15,7 +15,7 @@ function WelcomeScreen() {
         <h1 className="hero-title">
           Welcome to <span className="gradient-text">StudyMind AI</span>
         </h1>
-        <p className="hero-subtitle">
+        <p className="hero-subtitle gradient-text">
           Your personal AI tutor — ask anything, anytime. Get instant
           explanations, summaries, and more.
         </p>

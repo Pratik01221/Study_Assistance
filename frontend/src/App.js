@@ -7,12 +7,18 @@
 
 import React from 'react';
 import { ThemeProvider } from './context/ThemeContext';
+import { AuthProvider } from './context/AuthContext';
+import AuthGate from './components/AuthGate';
 import ChatInterface from './components/ChatInterface';
 
 function App() {
   return (
     <ThemeProvider>
-      <ChatInterface />
+      <AuthProvider>
+        <AuthGate>
+          <ChatInterface />
+        </AuthGate>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
