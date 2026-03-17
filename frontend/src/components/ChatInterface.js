@@ -1,19 +1,17 @@
 ﻿// ============================================================
 // components/ChatInterface.js — Main Chat Interface Component
 // ============================================================
-// The main chat component that orchestrates all chat functionality.
-// Uses the custom hook for state management and renders all sub-components.
-// ============================================================
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useChat } from '../hooks/useChat';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import ChatWindow from './ChatWindow';
 
-function ChatInterface() {
-  // Chat state and actions from custom hook
+export default function ChatInterface() {
+  const { user, logout } = useAuth();
+
   const {
     chats,
     activeChatId,
@@ -24,17 +22,17 @@ function ChatInterface() {
     error,
     setError,
     messagesEndRef,
-    inputRef,
     sendChatMessage,
     startNewChat,
     selectChat,
     handleKeyDown,
   } = useChat();
 
-  const { user, logout } = useAuth();
-
-  // UI state
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -64,7 +62,6 @@ function ChatInterface() {
           />
         </div>
 
-        {/* Mobile Sidebar Overlay */}
         {sidebarOpen && (
           <div
             className="fixed inset-0 z-40 bg-black/40 md:hidden"
@@ -89,5 +86,3 @@ function ChatInterface() {
     </div>
   );
 }
-
-export default ChatInterface;

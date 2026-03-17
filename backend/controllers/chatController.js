@@ -5,6 +5,7 @@
 // Controllers are responsible for processing requests and responses.
 // ============================================================
 
+const mongoose = require('mongoose');
 const aiService = require('../services/aiService');
 const Chat = require('../models/Chat');
 const { isNotEmpty, sanitizeMessage, isValidHistory } = require('../utils/validation');
@@ -31,7 +32,7 @@ async function askQuestion(req, res) {
 
     // Persist the conversation in Chat collection
     let chat = null;
-    if (chatId) {
+    if (chatId && mongoose.Types.ObjectId.isValid(chatId)) {
       chat = await Chat.findOne({ _id: chatId, userId: user.id });
     }
 

@@ -125,8 +125,21 @@ export function useChat() {
         content: msg.content,
       }));
 
+      // If this is a local temporary chat id, do not pass it to backend
+      const validChatId = /^[0-9a-fA-F]{24}$/.test(activeChatId) ? activeChatId : null;
+
       // Call API
-      const data = await sendMessage(text, history, activeChatId);
+      const data = await sendMessage(text, history, validChatId);
+
+      // If backend returns an official chatId, align local state with it
+      if (data.chatId && data.chatId !== activeChatId) {
+        setChats((prev) =>
+          prev.map((chat) =>
+            chat.id === activeChatId ? { ...chat, id: data.chatId } : chat
+          )
+        );
+        setActiveChatId(data.chatId);
+      }
 
       // Add AI response
       const aiMessage = {
