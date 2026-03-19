@@ -3,7 +3,7 @@
 // ============================================================
 
 import React from 'react';
-import { FaPlus, FaMoon, FaSun, FaRobot, FaHistory } from 'react-icons/fa';
+import { FaPlus, FaMoon, FaSun, FaRobot, FaHistory, FaTrash } from 'react-icons/fa';
 import { useTheme } from '../context/ThemeContext';
 
 export default function Sidebar({
@@ -13,6 +13,7 @@ export default function Sidebar({
   onNewChat,
   onClearChat,
   onSelectChat,
+  onDeleteChat,
 }) {
   const { isDarkMode, toggleTheme } = useTheme();
   return (
@@ -73,28 +74,47 @@ export default function Sidebar({
             </div>
           ) : (
             chats.map((chat) => (
-              <button
+              <div
                 key={chat.id}
-                type="button"
-                onClick={() => onSelectChat(chat.id)}
-                className={`flex w-full items-start gap-3 rounded-xl px-3 py-2 text-left text-sm transition ${
+                className={`relative flex w-full items-center rounded-xl px-1 py-1 transition ${
                   chat.id === activeChatId
                     ? 'bg-brand-500/15 text-brand-600 dark:bg-brand-500/20 dark:text-brand-200'
                     : 'bg-white text-slate-700 hover:bg-slate-100 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800'
                 }`}
               >
-                <span className="mt-1 text-slate-400 dark:text-slate-500">
-                  <FaHistory className="h-4 w-4" />
-                </span>
-                <div className="flex-1 overflow-hidden">
-                  <p className="truncate font-medium">
-                    {chat.title || 'New chat'}
-                  </p>
-                  <p className="truncate text-xs text-slate-500 dark:text-slate-400">
-                    {chat.lastMessage || 'Start the conversation...'}
-                  </p>
-                </div>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectChat(chat.id)}
+                  className="flex w-full items-start gap-3 rounded-xl px-3 py-2 text-left text-sm"
+                >
+                  <span className="mt-1 text-slate-400 dark:text-slate-500">
+                    <FaHistory className="h-4 w-4" />
+                  </span>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="truncate font-medium">
+                      {chat.title || 'New chat'}
+                    </p>
+                    <p className="truncate text-xs text-slate-500 dark:text-slate-400">
+                      {chat.lastMessage || 'Start the conversation...'}
+                    </p>
+                  </div>
+                </button>
+
+                {onDeleteChat && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const confirmDelete = window.confirm('Delete this chat?');
+                      if (confirmDelete) onDeleteChat(chat.id);
+                    }}
+                    className="ml-2 rounded p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                    aria-label="Delete chat"
+                  >
+                    <FaTrash className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
             ))
           )}
         </div>

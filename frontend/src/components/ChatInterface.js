@@ -25,6 +25,7 @@ export default function ChatInterface() {
     sendChatMessage,
     startNewChat,
     clearChatHistory,
+    deleteChat,
     selectChat,
     handleKeyDown,
   } = useChat();
@@ -44,6 +45,7 @@ export default function ChatInterface() {
           messageCount={messages.length}
           onNewChat={startNewChat}
           onClearChat={clearChatHistory}
+          onDeleteChat={deleteChat}
           onSelectChat={(chatId) => {
             selectChat(chatId);
             setSidebarOpen(false);
@@ -80,6 +82,7 @@ export default function ChatInterface() {
               messageCount={messages.length}
               onNewChat={startNewChat}
               onClearChat={clearChatHistory}
+              onDeleteChat={deleteChat}
               onSelectChat={(chatId) => {
                 selectChat(chatId);
                 setSidebarOpen(false);

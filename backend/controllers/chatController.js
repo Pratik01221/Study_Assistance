@@ -101,6 +101,50 @@ async function saveChatMessage(req, res) {
   }
 }
 
+async function deleteChat(req, res) {
+  try {
+    const user = req.user;
+    const { chatId } = req.params;
+
+    if (!user || !user.id) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    if (!chatId || !mongoose.Types.ObjectId.isValid(chatId)) {
+      return res.status(400).json({ error: 'Invalid chat ID.' });
+    }
+
+    const deleted = await Chat.findOneAndDelete({ _id: chatId, userId: user.id });
+
+    if (!deleted) {
+      return res.status(404).json({ error: 'Chat not found.' });
+    }
+
+    res.json({ success: true, chatId });
+  } catch (error) {
+    console.error('Delete Chat Error:', error);
+    res.status(500).json({ error: 'Server error while deleting chat.' });
+  }
+}
+
+async function deleteChatsByUser(req, res) {
+  try {
+    const user = req.user;
+    const { userId } = req.params;
+
+    if (!user || !user.id || user.id !== userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    await Chat.deleteMany({ userId: user.id });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Delete Chats By User Error:', error);
+    res.status(500).json({ error: 'Server error while deleting chats.' });
+  }
+}
+
 function healthCheck(req, res) {
   res.json({ status: 'AI Study Assistant Backend is running!', timestamp: new Date().toISOString() });
 }
@@ -109,5 +153,7 @@ module.exports = {
   askQuestion,
   getChatsByUser,
   saveChatMessage,
+  deleteChat,
+  deleteChatsByUser,
   healthCheck,
 };

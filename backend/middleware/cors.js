@@ -10,7 +10,7 @@ const config = require('../config');
 
 const corsOptions = {
   origin: config.CORS_ORIGINS,
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true,
 };
 

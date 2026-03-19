@@ -6,7 +6,12 @@
 // ============================================================
 
 import { useState, useRef, useEffect } from 'react';
-import { sendMessage, fetchChats } from '../services/chatService';
+import {
+  sendMessage,
+  fetchChats,
+  deleteChat as deleteChatApi,
+  deleteAllChats as deleteAllChatsApi,
+} from '../services/chatService';
 import { useAuth } from '../context/AuthContext';
 
 export function useChat() {
@@ -42,28 +47,41 @@ export function useChat() {
 
   const { user, logout } = useAuth();
 
+  const loadChats = async () => {
+    if (!user?.id) return;
+
+    try {
+      const persistedChats = await fetchChats(user.id);
+      if (persistedChats && persistedChats.length > 0) {
+        setChats(
+          persistedChats.map((item) => ({
+            id: String(item._id),
+            title: item.title || 'New chat',
+            messages: item.messages || [],
+            lastMessage: item.messages?.length ? item.messages[item.messages.length - 1].content : '',
+          }))
+        );
+        setActiveChatId(String(persistedChats[0]._id));
+      } else {
+        // Ensure baseline state when no chats exist
+        const freshId = String(Date.now());
+        setChats([
+          {
+            id: freshId,
+            title: 'New chat',
+            messages: [],
+            lastMessage: '',
+          },
+        ]);
+        setActiveChatId(freshId);
+      }
+    } catch (err) {
+      console.error('Failed to load chats:', err);
+    }
+  };
+
   // Fetch chats for authenticated user
   useEffect(() => {
-    async function loadChats() {
-      if (!user?.id) return;
-      try {
-        const persistedChats = await fetchChats(user.id);
-        if (persistedChats && persistedChats.length > 0) {
-          setChats(
-            persistedChats.map((item) => ({
-              id: item._id,
-              title: item.title || 'New chat',
-              messages: item.messages || [],
-              lastMessage: item.messages?.length ? item.messages[item.messages.length - 1].content : '',
-            }))
-          );
-          setActiveChatId(persistedChats[0]._id);
-        }
-      } catch (err) {
-        console.error('Failed to load chats:', err);
-      }
-    }
-
     loadChats();
   }, [user]);
 
@@ -189,8 +207,10 @@ export function useChat() {
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  // Clear all chats and start fresh
-  const clearChatHistory = () => {
+  // Clear all chat sessions and delete persisted history
+  const clearChatHistory = async () => {
+    setError(null);
+
     const id = String(Date.now());
     setChats([
       {
@@ -201,9 +221,66 @@ export function useChat() {
       },
     ]);
     setActiveChatId(id);
-    setError(null);
     setInputValue('');
+
+    if (user?.id) {
+      try {
+        await deleteAllChatsApi(user.id);
+        await loadChats(); // Ensure state matches cleared DB
+      } catch (err) {
+        console.error('Clear chat history backend error:', err);
+        setError(err.message || 'Could not clear chat history from backend.');
+
+        await loadChats();
+      }
+    }
+
     setTimeout(() => inputRef.current?.focus(), 100);
+  };
+
+  // Delete a chat session (local + backend)
+  const deleteChat = async (chatId) => {
+    setError(null);
+
+    // optimistically remove chat from local state
+    setChats((prev) => {
+      const next = prev.filter((chat) => chat.id !== chatId);
+      if (next.length === 0) {
+        const freshId = String(Date.now());
+        setActiveChatId(freshId);
+        return [
+          {
+            id: freshId,
+            title: 'New chat',
+            messages: [],
+            lastMessage: '',
+          },
+        ];
+      }
+
+      if (activeChatId === chatId) {
+        setActiveChatId(next[0].id);
+      }
+
+      return next;
+    });
+
+    const normalizedChatId = String(chatId);
+
+    if (/^[0-9a-fA-F]{24}$/.test(normalizedChatId)) {
+      try {
+        await deleteChatApi(normalizedChatId);
+        await loadChats(); // Ensure chat list is synced with DB after delete
+      } catch (err) {
+        console.error('Delete Chat error:', err);
+        setError(err.message || 'Could not delete chat.');
+
+        // Re-load from backend in case state is out of sync
+        await loadChats();
+      }
+    } else {
+      console.warn('Skipping backend delete, chat is not persisted yet:', normalizedChatId);
+    }
   };
 
   // Switch between chat sessions
@@ -239,6 +316,8 @@ export function useChat() {
     // Actions
     sendChatMessage,
     startNewChat,
+    clearChatHistory,
+    deleteChat,
     selectChat,
     handleKeyDown,
   };

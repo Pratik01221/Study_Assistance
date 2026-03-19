@@ -95,3 +95,37 @@ export async function saveChatMessage(chatId, role, content) {
 
   return data.chat;
 }
+
+export async function deleteChat(chatId) {
+  const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/api/chat/${chatId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'Could not delete chat.');
+  }
+
+  return data;
+}
+
+export async function deleteAllChats(userId) {
+  const token = getToken();
+  const response = await fetch(`${API_BASE_URL}/api/chats/${userId}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || 'Could not delete chat history.');
+  }
+
+  return data;
+}
