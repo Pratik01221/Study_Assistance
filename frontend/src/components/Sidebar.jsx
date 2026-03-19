@@ -17,7 +17,7 @@ export default function Sidebar({
 }) {
   const { isDarkMode, toggleTheme } = useTheme();
   return (
-    <aside className="hidden md:flex md:w-72 flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
+    <aside className="hidden md:flex md:w-60 flex-col bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800">
       <div className="flex items-center justify-between px-4 py-4 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-brand-500 text-white flex items-center justify-center shadow">
@@ -98,9 +98,7 @@ export default function Sidebar({
                       {chat.lastMessage || 'Start the conversation...'}
                     </p>
                   </div>
-                </button>
-
-                {onDeleteChat && (
+                  {onDeleteChat && (
                   <button
                     type="button"
                     onClick={(e) => {
@@ -114,6 +112,22 @@ export default function Sidebar({
                     <FaTrash className="h-4 w-4" />
                   </button>
                 )}
+                </button>
+
+                {/* {onDeleteChat && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const confirmDelete = window.confirm('Delete this chat?');
+                      if (confirmDelete) onDeleteChat(chat.id);
+                    }}
+                    className="ml-2 rounded p-2 text-slate-500 hover:bg-slate-200 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                    aria-label="Delete chat"
+                  >
+                    <FaTrash className="h-4 w-4" />
+                  </button>
+                )} */}
               </div>
             ))
           )}
