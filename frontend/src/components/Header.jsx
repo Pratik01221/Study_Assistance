@@ -28,7 +28,7 @@ export default function Header({ onMenuClick, user, onLogout }) {
       </div>
 
       <div className="hidden md:flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
-        <span>Tip: Shift+Enter for new line</span>
+    
         {user && (
           <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100 p-1 dark:border-slate-800 dark:bg-slate-900">
             <div className="h-8 w-8 overflow-hidden rounded-full border border-slate-300 dark:border-slate-700">
