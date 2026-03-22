@@ -48,7 +48,7 @@ async function generateResponse(message, history = []) {
     }
 
     const aiResponse = data.choices[0].message.content;
-    console.log(`AI Response generated (${aiResponse.length} chars)`);
+    // console.log(`AI Response generated (${aiResponse.length} chars)`);
 
     return aiResponse;
   } catch (error) {
